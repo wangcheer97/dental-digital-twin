@@ -1,0 +1,323 @@
+/* ---------- 全局：固定字体 + 整页无滚动 ---------- */
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  font-family: Arial, Helvetica, "Helvetica Neue", sans-serif;
+}
+body {
+  display: flex;
+  flex-direction: column;
+}
+.main-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+}
+.container {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 3fr;  /* 关键比例设置 */
+}
+
+/* 左侧栏：三个功能块竖向平分并填满整个高度 */
+.sidebar {
+  min-height: 0;
+  background: #614392;
+  padding: 10px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow: hidden;
+}
+.sidebar > label {
+  flex: 0 0 auto;
+}
+.sidebar > .left-panel,
+.sidebar > .left-panel2,
+.sidebar > .left-panel22,
+.sidebar > .left-panelnew,
+.sidebar > .table-container {
+  flex: 1 1 0;
+  min-height: 0;
+  height: auto;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+.sidebar > .left-panel > div,
+.sidebar > .left-panel2 > div {
+  height: 100% !important;
+}
+.sidebar .pic {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #fff;
+  display: block;
+}
+.sidebar > .table-container {
+  overflow: hidden;
+}
+.sidebar table {
+  height: 100%;
+}
+
+.left-panel {
+  width: 100%; 
+  height: 140px;
+  margin-top:10px;
+  margin-bottom:10px;
+  position: relative;
+  /* padding: 10px; */
+  /* background: #ff0000; */
+  border: 1px solid #ddd;
+  /* opacity: 0.9; */
+  /* border-right: 1px solid #ddd; */
+}
+
+.left-panel2 {
+  width: 100%; 
+  height: 150px;
+  margin-top:10px;
+  margin-bottom:10px;
+  position: relative;
+  border: 1px solid #ddd;
+  /* padding: 10px; */
+  /* background: #ff0000; */
+  /* opacity: 0.9; */
+  /* border-right: 1px solid #ddd; */
+}
+
+
+.left-panelnew {
+  width: 100%; 
+  height: 140px;
+  margin-top:10px;
+  margin-bottom:10px;
+  position: relative;
+  /* border: 1px solid #ddd; */
+  /* padding: 10px; */
+  /* background: #ff0000; */
+  /* opacity: 0.9; */
+  /* border-right: 1px solid #ddd; */
+}
+
+.left-panel22 {
+  width: 100%; 
+  height: 150px;
+  margin-top:10px;
+  margin-bottom:10px;
+  position: relative;
+  border: 1px solid #ddd;
+  /* padding: 10px; */
+  /* background: #ff0000; */
+  /* opacity: 0.9; */
+  /* border-right: 1px solid #ddd; */
+}
+
+.map-container {
+  position: relative;
+  background: #f0f0f0;
+  overflow: hidden;
+  min-height: 0;
+}
+.map-container > .pic {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+  /* 导航容器样式 */
+.nav-container {
+  padding: 3px;
+  background: #c6c5c64e;
+  border-bottom: 1px solid #dee2e6;
+  justify-content: space-between;
+  display: flex;
+  align-items: center;
+
+}
+/* 合成数据声明（导航条内，两个系统共用） */
+.synthetic-note {
+  margin-left: auto;
+  margin-right: 18px;
+  padding: 3px 10px;
+  font-size: 11px;
+  color: #555;
+  background: #fff8e1;
+  border: 1px solid #f0d58c;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+.nav-title {
+  margin-left: 0 !important;
+}
+
+/* 大标题样式 */
+.nav-title {
+  margin-left: auto; /* 让标题推到最右侧 */
+  font-size: 18px;
+  font-weight: bold;
+  color: #614392;
+}
+
+/* 按钮基础样式 */
+.tab-btn {
+  height: 30px;
+  padding: 6px 14px;
+  margin: 0 10px;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 14px;
+  background: #8f98a1;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  justify-content: flex-start
+}
+
+/* 按钮交互效果 */
+.tab-btn:hover {
+  background: #7f878c;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+/* 激活状态 */
+.tab-btn.active {
+  background: #614392;
+  box-shadow: 0 2px 5px #533485(0,123,255,0.5);
+}
+
+/* 内容区域样式 */
+.content {
+  display: none;
+  padding: 3px;
+  margin: 3px;
+  animation: fadeIn 0.5s ease;
+  min-height: 0;
+}
+
+.content.active {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* 淡入动画 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 表格容器 */
+.table-container {
+  overflow-x: auto;
+}
+
+/* 表格样式 */
+table {
+  width: 100%;
+  height: 100%;
+  /* margin-top:10px; */
+  border-collapse: collapse;
+  border: 1px solid white;
+}
+
+
+th, td {
+  border: 1px solid white;
+  padding: 2.8px;
+  text-align: center;
+  color: white;
+  font-size: 9px;
+}
+
+th {
+  /* background-color: #8a8a8ab6; */
+  text-align: match-parent;
+}
+
+/* map交互按钮 */
+
+/* 顶部按钮容器 */
+.toolbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.668);
+  display: flex;
+  justify-content: flex-start; /* 让按钮靠左对齐 */
+  align-items: center;
+  gap: 10px; /* 按钮之间的间距 */
+  padding: 5px 20px; /* 左右增加 padding 以调整位置 */
+  z-index: 1000;
+}
+
+
+/* 按钮样式 */
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  font-size: 14px;
+  color: white;
+  background-color: #B04B90;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn i {
+  font-size: 14px;
+}
+
+.btn:hover {
+  background-color: #B04B90;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+/* 按钮选中状态
+.btn.active {
+  background-color: #614392;
+} */
+
+/* 搜索框样式 */
+#search-container {
+  position: absolute;
+  top: 0px;
+  right: 50px;
+  background: white;
+  padding: 5px;
+  border-radius: 10px;
+  /* box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); */
+  display: flex;
+  align-items: center;
+}
+#search-box {
+  width: 120px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  margin-right: 5px;
+}
+#search-btn {
+  background: #FFC15C  ;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+#search-btn:hover {
+  background: #ff9676;
+}

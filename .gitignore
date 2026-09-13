@@ -1,0 +1,30 @@
+# System files
+.DS_Store
+Thumbs.db
+
+# Editor configuration
+.vscode/
+.idea/
+
+# Local credentials / config
+*.env
+.env*
+config.local.*
+secrets.*
+
+# Temporary and backup files
+*backup*
+*.bak
+*.tmp
+*.log
+*~
+_test*.html
+
+# Raw GIS processing workspace (not needed by the web app)
+data processing/
+
+# Legacy / scratch pages not part of the deployed prototype
+demo copy.html
+1.html
+js/script.js
+claude_code_task_brief.md

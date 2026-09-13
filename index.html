@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dental Digital Twins DEMO</title>
+    <!-- ======================================================================
+         CONFIG: Mapbox public access token.
+         Replace with a public token (pk.*) that is URL-restricted to the
+         deployment domain in the Mapbox dashboard (Account > Tokens > URL restrictions).
+         ====================================================================== -->
+    <script>
+      const MAPBOX_TOKEN = 'pk.eyJ1Ijoid2FuZ2NoZWVyIiwiYSI6ImNsemNldmg3dDBiYjUyam9hd3Y1eHcwM2UifQ.O4kBa2QHGIKhhv1XLXxdqA';
+    </script>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="data/geodata.js"></script>
+    <script src="js/echart.js"></script>
+    
+    <style>
+        /* 设置地图容器的大小 */
+        #map {
+            position: absolute;
+            top: 0; /* 留出顶部按钮空间 */
+            bottom: 0;
+            width: 100%;
+        }
+
+    </style>
+</head>
+
+<body>
+  
+  <!-- 导航按钮 -->
+  <div class="nav-container">   
+    <button class="tab-btn active" onclick="showPage('page1')">Community System</button>
+    <button class="tab-btn" onclick="showPage('page2')">Patient System</button>
+    <div class="synthetic-note" title="Synthetic demonstration data"><i class="fas fa-circle-info"></i> All data shown are synthetic and do not represent any real individual.</div>
+    <div class="nav-title" style="margin-right: 20px;">Dental Digital Twin Prototype</div>     
+  </div>
+
+  <!-- 内容区域 -->
+  <div class="main-content">
+    <div id="page1" class="content active">
+      <div class="container">
+        <div class="sidebar">
+          <!-- <div class="control-group"> -->
+          <label style="font-size: 14px;"><b>Ⅰ.Patient Number Real-time Monitoring</b></label>
+            <div class="left-panel">
+              <div id="chartContainer" style="width: 100%; height: 150px; margin: auto;"></div>
+            </div>
+          <label style="font-size: 14px;"><b>Ⅱ.Dental Patient Historical Changes</b></label>
+            <div class="left-panel2">
+              <div id="lineChart" style="width: 100%; height: 150px; margin: auto;"></div>
+            </div>
+          <label style="font-size: 14px;"><b>Ⅲ.Dental Related Index in Communities</b></label>
+              <div class="table-container">
+                <table style= "margin-top:10px;">
+                    <tr>
+                        <th>Name</th>
+                        <th>Patient</th>
+                        <th>Poverty</th>
+                        <th>Aging</th>
+                        <th>Crime</th>
+                        <th>Education</th>
+                        <th>Healthcare</th>
+
+                    </tr>
+                    <tr><td>Com1</td><td>12%</td><td>23%</td><td>34%</td><td>45%</td><td>56%</td><td>56%</td></tr>
+                    <tr><td>Com2</td><td>22%</td><td>33%</td><td>44%</td><td>55%</td><td>66%</td><td>24%</td></tr>
+                    <tr><td>Com3</td><td>11%</td><td>43%</td><td>54%</td><td>65%</td><td>76%</td><td>49%</td></tr>
+                    <tr><td>Com4</td><td>24%</td><td>12%</td><td>64%</td><td>75%</td><td>24%</td><td>80%</td></tr>
+                    <tr><td>Com5</td><td>52%</td><td>20%</td><td>74%</td><td>85%</td><td>27%</td><td>30%</td></tr>
+                    <tr><td>Com6</td><td>62%</td><td>33%</td><td>84%</td><td>25%</td><td>40%</td><td>50%</td></tr>
+                    <tr><td>Com7</td><td>72%</td><td>43%</td><td>24%</td><td>68%</td><td>20%</td><td>52%</td></tr>
+                </table>
+              </div>
+        </div>
+
+        <!-- 地图和交互按钮 -->
+        <div class="map-container">
+          <div id="map"></div>
+          <div class="toolbar">
+            <button class="btn" id="btn-patient"  >
+                <i class="fas fa-user-injured"></i><b>Dental Patient</b> 
+            </button>
+            <button class="btn" id="btn-medical"  style="background-color: #E9617F;">
+                <i class="fas fa-hospital"></i> <b>Dental Facility</b>
+            </button>
+            <button class="btn" id="btn-density"  style="background-color: #FF8B68;">
+                <i class="fas fa-chart-area"></i> <b>Density Layer</b>
+            </button>
+                <!-- 搜索框 -->
+            <div id="search-container">
+              <input type="text" id="search-box" placeholder="Input Patient ID">
+              <button id="search-btn"><b>Search</b></button>
+            </div>
+          </div>
+        </div> 
+      </div>   
+    </div>
+  
+
+    <div id="page2" class="content">
+      <div class="container">
+        <div class="sidebar">
+            <label style="font-size: 14px;"><b>Ⅰ.Patient Medical Information Summary</b></label>
+            <div class="left-panelnew">
+              <div class="table-container" style="width: 100%; height: 100%;">
+                <table style="table-layout: fixed;">
+                    <tr><th>Name</th><td>Cecilia Pow</td></tr>
+                    <tr><th>Gender</th><td>Male</td></tr>
+                    <!-- <tr><th>Age</th><td>33</td></tr> -->
+                    <tr><th>Occupation</th><td>Teacher</td></tr>
+                    <tr><th>Dental Disease Type</th><td>Dental caries</td></tr>
+                    <tr><th>Dental Insurance</th><td>Yes</td></tr>
+                    <tr><th>Eating Habits</th><td>High-sugar diet</td></tr>
+
+                </table>
+              </div>  
+            </div>
+            <label style="font-size: 14px;"><b>Ⅱ.Dental Health Condition Monitoring</b></label>
+              <div class="left-panel22">
+                <img class="pic" src="images/monitoring.jpg">
+              </div>
+            <label style="font-size: 14px;"><b>Ⅲ.Dental Post-Treatment and Simulation</b></label>
+              <div class="left-panel22">
+                <img class="pic" src="images/Rectangle 1.png">
+              </div>
+        </div>
+
+        <!-- 地图和交互按钮 -->
+        <div class="map-container">
+          <img class="pic" src="images/Picture1.jpg">
+        </div>
+      </div>  
+    </div>
+  </div>
+
+
+  <!-- 首页按钮切换 --> 
+  <script>
+    function showPage(pageId) {
+        // 切换按钮状态
+        document.querySelectorAll('.tab-btn').forEach(btn => 
+            btn.classList.remove('active'));
+        document.querySelector(`[onclick="showPage('${pageId}')"]`)
+            .classList.add('active');
+
+        // 切换内容
+        document.querySelectorAll('.content').forEach(content =>
+            content.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+
+        // 切换回社区页面时让地图和图表重新适配尺寸
+        if (pageId === 'page1') {
+            setTimeout(() => {
+                if (window.map) window.map.resize();
+                window.dispatchEvent(new Event('resize'));
+            }, 50);
+        }
+    }
+  </script>
+
+  <!-- 点击弹出牙片 --> 
+  <script>
+    function openImage(src) {
+      window.open(src, '_blank');}
+  </script>
+
+
+  <!-- 引入 Mapbox GL JS 的 JavaScript -->
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+
+  <script>
+      // 设置你的 Mapbox Access Token
+      mapboxgl.accessToken = MAPBOX_TOKEN;
+
+      let geojsonData = null;
+
+      // 初始化地图
+      const map = new mapboxgl.Map({
+          container: 'map', // 地图容器的 ID
+          style: 'mapbox://styles/mapbox/light-v11', // 地图样式
+          center: [-96.294669 , 30.593515], // 地图中心的经纬度 , 
+          zoom: 11.1 // 地图缩放级别
+      });
+      window.map = map;
+
+ 
+      map.on('load', () => {
+        
+        // ------------------------------------------------------------------   
+        // 加入虚假的病人空间分布点状数据，作为预览牙科病人信息，需要实现点击即可预览病人基本信息。
+
+        document.getElementById('btn-patient').addEventListener('click', function() {
+          
+          var button1 = document.getElementById('btn-patient');
+
+          if (map.getSource('patients')) {
+              // 如果图层存在，移除图层和数据源
+              map.removeLayer('patients-layer');
+              map.removeSource('patients');
+              button1.classList.remove('active'); // 取消按钮高亮
+          } else {
+                  // 数据由 data/geodata.js 内联加载（file:// 直接打开也能用）
+                  Promise.resolve(window.PATIENT_DATA)
+                  .then(data => {
+                      geojsonData = data;  // 保存 GeoJSON 数据
+
+                      // 在 Mapbox 中添加数据源
+                      map.addSource('patients', {
+                          type: 'geojson',
+                          data: geojsonData
+                      });
+
+                      // 添加点图层
+                      map.addLayer({
+                          id: 'patients-layer',
+                          type: 'circle',
+                          source: 'patients',
+                          paint: {
+                              'circle-radius': 2.5,
+                              'circle-stroke-width': 1.5,
+                              'circle-color': '#B04B90',
+                              'circle-stroke-color': 'white'
+                          },
+                      });
+                  })
+                  .catch(error => console.error('GeoJSON 加载失败:', error));
+
+                    // 点击交互
+                    map.on('click', 'patients-layer', (e) => {
+                      const coord = e.lngLat;
+                      const props = e.features[0].properties;
+                      new mapboxgl.Popup()
+                        .setLngLat(coord)
+                        .setHTML(`<b style="color: #B04B90;">Name: ${props.Name}</b>
+                                  <br><b>Patient ID:</b> ${props.ID}
+                                  <br><b>Gender:</b> ${props.Gender}
+                                  <br><b>Age:</b> ${props.Age}
+                                  <br><b>Occupation:</b> ${props.Occupation}
+                                  <br><b>Home Address:</b> ${props.Address}
+                                  <br><b>Email:</b> ${props.Email}
+                                  <br><b>Phone Number:</b> ${props.Phone}
+                                  <br><b>Dental Insurance:</b> ${props.Insurance}
+                                  <br><b>Community ID:</b> ${props.CommunityID}
+                                  <br><b>Community Officers:</b> ${props.CEOfficers}
+                                  <br><b>Eating Habits:</b> ${props.EatingHabits}
+                                  <br><b>Electronic Image: <a href="#" onclick="openImage('images/x-ray.png')">X-Rays</a></b>
+                                  <br><b style="color: #614392;"><u>PATIENT SYSTEM ENTRANCE, CLICK!</u></b>
+                                  `
+                                )
+                        .addTo(map);
+                    });
+
+                    // 鼠标悬停效果
+                    map.on('mouseenter', 'patients-layer', () => {
+                      map.getCanvas().style.cursor = 'pointer';
+                    });
+                    map.on('mouseleave', 'patients-layer', () => {
+                      map.getCanvas().style.cursor = '';
+                    });
+                    
+                    button1.classList.add('active'); // 高亮按钮
+
+                            // 搜索功能
+                    document.getElementById('search-btn').addEventListener('click', function () {
+                        var searchID = document.getElementById('search-box').value.trim();
+                        
+                        // 确保已加载 GeoJSON 数据
+                        if (!geojsonData) {
+                            alert("PLEASE WAIT！");
+                            return;
+                        }
+
+                        // 检查输入是否为数字
+                        if (!searchID || isNaN(searchID)) {
+                            alert("INPUT VALID ID ( 1, 2, 3)");
+                            return;
+                        }
+
+                        searchID = parseInt(searchID); // 转换为整数
+                        
+                        // 查找匹配的点
+                        var matchedFeature = geojsonData.features.find(feature => feature.properties.ID === searchID);
+                        
+                        if (matchedFeature) {
+                            var coordinates = matchedFeature.geometry.coordinates;
+                            
+                            // 地图平移并缩放到该点
+                            map.flyTo({
+                                center: coordinates,
+                                zoom: 14,
+                                essential: true
+                            });
+
+                            // 添加弹出框
+                            new mapboxgl.Popup()
+                                .setLngLat(coordinates)
+                                .setHTML(`<strong> Name: ${matchedFeature.properties.Name || "PATIENT"}</strong> (Patient ID: ${searchID})`)
+                                .addTo(map);
+                        } else {
+                            alert("NO PATIENT ID！");
+                        }
+                    });
+          }
+
+        });
+
+
+        // ------------------------------------------------------------------   
+        // 2.加入牙科医院设施密度数据，功能按键2。        
+        document.getElementById('btn-medical').addEventListener('click', function() {
+          
+          var button1 = document.getElementById('btn-medical');
+
+          if (map.getSource('facility')) {
+              // 如果图层存在，移除图层和数据源
+              map.removeLayer('facility-layer');
+              map.removeSource('facility');
+              button1.classList.remove('active'); // 取消按钮高亮
+          } else {
+
+                    // 图标内嵌在 data/geodata.js 中（file:// 直接打开也能用）
+                    const hospitalImg = new Image();
+                    hospitalImg.onload = function () {
+                        const image = hospitalImg;
+
+                        // 添加自定义图标
+                        if (!map.hasImage('hospital-icon')) map.addImage('hospital-icon', image);
+                        
+                        map.addSource('facility', {
+                            type: 'geojson',
+                            data: window.FACILITY_DATA, // 来自 data/geodata.js
+                        });
+
+                        // 添加医院点图层
+                        map.addLayer({
+                            id: 'facility-layer',
+                            type: 'symbol',
+                            source: 'facility',
+                            layout: {
+                                'icon-image': 'hospital-icon',  // 使用自定义图标
+                                'icon-size': 0.15,  // 调整图标大小
+                                'icon-allow-overlap': true  // 允许图标重叠显示
+                            }
+                        });
+                    };
+                    hospitalImg.src = window.HOSPITAL_ICON;
+
+                    // 点击交互
+                    map.on('click', 'facility-layer', (e) => {
+                      const coord = e.lngLat;
+                      const props = e.features[0].properties;
+                      new mapboxgl.Popup()
+                        .setLngLat(coord)
+                        .setHTML(`<b>${props.Name}</b>
+                                  `
+                                )
+                        .addTo(map);
+                    });
+
+                    // 鼠标悬停效果
+                    map.on('mouseenter', 'facility-layer', () => {
+                      map.getCanvas().style.cursor = 'pointer';
+                    });
+                    map.on('mouseleave', 'facility-layer', () => {
+                      map.getCanvas().style.cursor = '';
+                    });
+                    
+                    button1.classList.add('active'); // 高亮按钮
+          }
+
+        });        
+
+        // ------------------------------------------------------------------   
+        // 3.加入病人密度数据，功能按键3。
+        document.getElementById('btn-density').addEventListener('click', function() {
+          
+          var button3 = document.getElementById('btn-density');
+
+          if (map.getSource('density')) {
+              // 如果图层存在，移除图层和数据源
+              map.removeLayer('density-layer');
+              map.removeSource('density');
+              button3.classList.remove('active'); // 取消按钮高亮
+          } else {
+                    map.addSource('density', {
+                      type: 'geojson',
+                      data: window.DENSITY_DATA // 来自 data/geodata.js
+                    });
+
+
+                    // 添加符号图层
+                    map.addLayer({
+                      id: 'density-layer',
+                      type: 'fill',
+                      source: 'density',
+                      paint: {
+                            'fill-color': {  
+                            property: 'PNT_COUNT', // 你的属性值  
+                            stops: [  
+                                [20, '#FFC15C'], // 当属性值为0时，颜色为红色 
+                                [50, '#FF8B68'], // 当属性值在0到0.5之间时，颜色为黄色   
+                                [100, '#E9617F'], // 当属性值在0到0.5之间时，颜色为黄色  
+                                [300, '#614392'] // 当属性值为1时，颜色为绿色  
+                            ]  
+                            },
+                            'fill-opacity': 0.5
+                        }
+                    });
+
+                    // 点击交互
+                    map.on('click', 'density-layer', (e) => {
+                      const coord = e.lngLat;
+                      const props = e.features[0].properties;
+                      new mapboxgl.Popup()
+                        .setLngLat(coord)
+                        .setHTML(`<b>Patient Number: ${props.PNT_COUNT}</b>`
+                                )
+                        .addTo(map);
+                    });
+
+                    // 鼠标悬停效果
+                    map.on('mouseenter', 'density-layer', () => {
+                      map.getCanvas().style.cursor = 'pointer';
+                    });
+                    map.on('mouseleave', 'density-layer', () => {
+                      map.getCanvas().style.cursor = '';
+                    });
+                    
+                    button3.classList.add('active'); // 高亮按钮
+
+          }
+
+        });
+
+
+
+
+          // .catch(error => console.error('加载 GeoJSON 失败:', error));
+        // ------------------------------------------------------------------            
+        // 加载college station的社区边界范围,作为底图
+        map.addSource('Background', {
+            type: 'geojson',
+            data: window.BOUNDARY_DATA // 来自 data/geodata.js
+        });
+
+        map.addLayer({
+            'id': 'Add-Background2',
+            'type': 'line',
+            'source': 'Background',
+            'paint': {
+                'line-color': '#6F6F6F', 
+                'line-width': 1.5,
+                'line-opacity': 0.8,
+            },
+
+        });
+
+        map.addLayer({  
+                id: 'labels',  
+                type: 'symbol',  
+                source: 'Background',  
+                layout: {  
+                'text-field': '{Enforce_Of}',  
+                'text-font': ['Open Sans Regular', 'Arial Unicode MS Bold'],  
+                'text-size': 10,
+                },
+                paint: {
+                'text-color': '#6F6F6F',  // 字体颜色，红色
+                }  
+        });
+      });
+
+      
+  </script>
+
+  <!-- <script>
+    // 生成侧边栏默认列表
+    const resultsContainer = document.getElementById('results');
+    function updateList(query = '') {
+        resultsContainer.innerHTML = ''; // 清空列表
+        let filtered = [];
+
+        // 筛选符合搜索条件的点，并优先显示
+        if (query) {
+            filtered = geojsonData.features.filter(feature =>
+                feature.properties.Name.toLowerCase().includes(query) || 
+                feature.properties.Age.toLowerCase().includes(query)
+            );
+        }
+
+        // 创建搜索结果（优先显示匹配项）
+        const orderedFeatures = [...filtered, ...geojsonData.features.filter(f => !filtered.includes(f))];
+
+        orderedFeatures.forEach(feature => {
+            const div = document.createElement('div');
+            div.className = 'result';
+            div.textContent = `${feature.properties.Name} (${feature.properties.Age})`;
+            
+            // 如果是匹配结果，设置背景高亮
+            if (filtered.includes(feature)) {
+                div.style.background = "#d1ecf1"; // 轻微高亮
+            }
+
+            div.onclick = () => {
+                map.flyTo({
+                    center: feature.geometry.coordinates,
+                    zoom: 14
+                });
+
+                new mapboxgl.Popup()
+                    .setLngLat(feature.geometry.coordinates)
+                    .setHTML(`<strong>${feature.properties.Name}</strong>`)
+                    .addTo(map);
+            };
+
+            resultsContainer.appendChild(div);
+        });
+    }
+
+    // 初次加载显示所有点
+    updateList();
+
+    // 搜索框事件
+    document.getElementById('search').addEventListener('input', function () {
+        updateList(this.value.trim().toLowerCase());
+    });
+
+  </script> -->
+</body>
+</html>

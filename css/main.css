@@ -1,3 +1,4 @@
+*, *::before, *::after { box-sizing: border-box; }
 /* ---------- 全局：固定字体 + 整页无滚动 ---------- */
 html, body {
   height: 100%;
@@ -18,103 +19,84 @@ body {
   flex: 1 1 auto;
   min-height: 0;
   display: grid;
-  grid-template-columns: 1fr 3fr;  /* 关键比例设置 */
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);  /* 关键比例设置 */
 }
 
-/* 左侧栏：三个功能块竖向平分并填满整个高度 */
+/* Six grid rows keep each heading attached to one equally sized panel. */
 .sidebar {
+  min-width: 0;
   min-height: 0;
   background: #614392;
-  padding: 10px;
+  padding: clamp(8px, 1vh, 16px);
   color: white;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: clamp(6px, 1vh, 14px);
   overflow: hidden;
+  container-type: inline-size;
+}
+/* Give the seven-row community table more room than either chart. */
+#page1 .sidebar {
+  grid-template-rows: auto minmax(0, .9fr) auto minmax(0, .9fr) auto minmax(0, 1.2fr);
 }
 .sidebar > label {
-  flex: 0 0 auto;
+  font-size: clamp(10px, min(4.15cqw, 2.15vh), 22px) !important;
+  line-height: 1.2;
 }
 .sidebar > .left-panel,
 .sidebar > .left-panel2,
 .sidebar > .left-panel22,
 .sidebar > .left-panelnew,
 .sidebar > .table-container {
-  flex: 1 1 0;
+  min-width: 0;
   min-height: 0;
   height: auto;
-  margin-top: 4px;
-  margin-bottom: 4px;
+  margin: 0;
+  position: relative;
 }
+.left-panel, .left-panel2, .left-panel22 { border: 1px solid #ddd; }
 .sidebar > .left-panel > div,
-.sidebar > .left-panel2 > div {
-  height: 100% !important;
-}
+.sidebar > .left-panel2 > div { height: 100% !important; }
 .sidebar .pic {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  background: #fff;
+  background: white;
   display: block;
 }
-.sidebar > .table-container {
+/* Intrinsic table minimum prevents overlap; the table itself fills spare height.
+   Raster panels retain their original ratios; short windows scroll the sidebar. */
+#page2 .sidebar {
+  grid-template-rows: auto minmax(min-content, 1fr) auto auto auto auto;
+  overflow-y: auto;
+}
+#page2 .left-panel22 {
+  width: 100%;
   overflow: hidden;
 }
-.sidebar table {
-  height: 100%;
+#page2 .monitoring-panel { aspect-ratio: 604 / 300; }
+#page2 .simulation-panel { aspect-ratio: 1004 / 517; }
+#page2 .left-panel22 .pic {
+  position: absolute;
+  inset: 0;
+  object-fit: contain;
 }
-
-.left-panel {
-  width: 100%; 
-  height: 140px;
-  margin-top:10px;
-  margin-bottom:10px;
-  position: relative;
-  /* padding: 10px; */
-  /* background: #ff0000; */
-  border: 1px solid #ddd;
-  /* opacity: 0.9; */
-  /* border-right: 1px solid #ddd; */
+.sidebar .table-container { overflow: auto; }
+.sidebar table { height: 100%; }
+.sidebar th {
+  position: sticky;
+  top: 0;
+  background-color: #614392;
+  z-index: 1;
 }
-
-.left-panel2 {
-  width: 100%; 
-  height: 150px;
-  margin-top:10px;
-  margin-bottom:10px;
-  position: relative;
-  border: 1px solid #ddd;
-  /* padding: 10px; */
-  /* background: #ff0000; */
-  /* opacity: 0.9; */
-  /* border-right: 1px solid #ddd; */
+.sidebar th, .sidebar td {
+  font-size: clamp(9px, min(3.15cqw, 1.8vh), 17px);
+  line-height: 1.15;
+  padding: 2px;
 }
-
-
-.left-panelnew {
-  width: 100%; 
-  height: 140px;
-  margin-top:10px;
-  margin-bottom:10px;
-  position: relative;
-  /* border: 1px solid #ddd; */
-  /* padding: 10px; */
-  /* background: #ff0000; */
-  /* opacity: 0.9; */
-  /* border-right: 1px solid #ddd; */
-}
-
-.left-panel22 {
-  width: 100%; 
-  height: 150px;
-  margin-top:10px;
-  margin-bottom:10px;
-  position: relative;
-  border: 1px solid #ddd;
-  /* padding: 10px; */
-  /* background: #ff0000; */
-  /* opacity: 0.9; */
-  /* border-right: 1px solid #ddd; */
+#page2 .sidebar th, #page2 .sidebar td {
+  font-size: clamp(10px, 3.3cqw, 17px);
 }
 
 .map-container {
@@ -127,6 +109,7 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  background: #444;
   display: block;
 }
 
@@ -198,7 +181,7 @@ body {
   display: none;
   padding: 3px;
   margin: 3px;
-  animation: fadeIn 0.5s ease;
+
   min-height: 0;
 }
 
@@ -311,7 +294,7 @@ th {
   margin-right: 5px;
 }
 #search-btn {
-  background: #FFC15C  ;
+  background: #614392;
   color: white;
   border: none;
   padding: 5px 10px;
@@ -319,5 +302,149 @@ th {
   cursor: pointer;
 }
 #search-btn:hover {
-  background: #ff9676;
+  background: #533580;
 }
+/* Panel D scales with its sidebar while all eight table rows fill the panel. */
+.index-table { table-layout: fixed; width: 100%; }
+#page1 .index-table th, #page1 .index-table td {
+  font-size: clamp(10px, min(3.55cqw, 2vh), 18px);
+}
+.index-table th { white-space: normal; }
+.index-table td { white-space: nowrap; }
+.index-table .unit { font-size: .8em; opacity: .85; }
+
+/* Keep the toolbar in normal flex flow so search never overlaps layer controls. */
+.toolbar {
+  height: auto;
+  min-height: 40px;
+  padding: 5px 12px;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+}
+#search-container { position: static; margin-left: auto; padding: 0; }
+.nav-container { gap: 8px; flex-wrap: wrap; }
+.nav-title { margin-right: 10px !important; font-size: clamp(14px, 1.3vw, 24px); }
+.synthetic-note { font-size: clamp(9px, .75vw, 13px); margin-right: 0; }
+.tab-btn { margin: 0 4px; flex-shrink: 0; }
+@media (max-width: 1100px) {
+  .container { grid-template-columns: minmax(280px, 28%) minmax(0, 1fr); }
+  .btn { font-size: 11px; gap: 4px; padding: 5px 7px; }
+  .toolbar { gap: 6px; padding: 5px 8px; }
+  #search-box { width: 100px; }
+  .synthetic-note { order: 4; margin-left: 4px; }
+  .nav-title { margin-left: auto !important; }
+}
+/* At phone widths use page scrolling instead of compressing seven columns. */
+@media (max-width: 700px) {
+  html, body { height: auto; min-height: 100%; overflow: auto; }
+  .container { grid-template-columns: minmax(0, 1fr); }
+  .sidebar { height: max(690px, 90vh); }
+  .map-container { min-height: 65vh; }
+  .nav-title { font-size: 14px; }
+  .tab-btn { font-size: 12px; padding: 6px 10px; }
+}
+
+/* One sizing system: intrinsic rows plus distributed spare height, never vh rows. */
+#page2 .sidebar > .left-panelnew { align-self: stretch; min-height: min-content; width: 100%; }
+#page2 .patient-summary { height: 100%; }
+#page2 .patient-summary th, #page2 .patient-summary td {
+  height: auto;
+  padding: clamp(3px, .9cqw, 5px) 4px;
+  overflow-wrap: anywhere;
+}
+
+/* Interactive anatomy and the original transparent tooth reference. */
+.anatomy-panel {
+  background: #444;
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 1.2fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  color: white;
+}
+.anatomy-stage { position: relative; min-width: 0; min-height: 0; }
+#dental-model { width: 100%; height: 100%; background: #444; --poster-color: #444; }
+.teeth-reference { min-width: 0; min-height: 0; display: flex; align-items: center; padding: 24px 20px 24px 0; }
+.teeth-reference img { width: 100%; height: 78%; object-fit: contain; }
+.model-controls {
+  position: absolute; bottom: 12px; left: 14px; right: 10px;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  font-size: clamp(10px, .8vw, 14px); color: #eee;
+  pointer-events: none;
+}
+#reset-model { pointer-events: auto; flex-shrink: 0; cursor: pointer; padding: 7px 12px; border-radius: 6px; border: 1px solid #aaa; color: white; background: #614392; }
+.model-status, .model-error { position: absolute; top: 45%; left: 0; right: 0; text-align: center; padding: 14px; font-size: 14px; }
+.model-attribution { grid-column: 1 / -1; text-align: center; padding: 6px 10px; font-size: 10px; line-height: 1.4; color: #ccc; }
+.model-attribution a { color: inherit; }
+@media (max-width: 900px) { .model-controls { flex-wrap: wrap; } .teeth-reference { padding-right: 10px; } }
+
+/* Legend stays below the toolbar, including when controls wrap. */
+.map-legend {
+  position: absolute; top: calc(var(--toolbar-height, 40px) + 12px); bottom: auto; left: auto; right: 14px;
+  z-index: 2; width: 200px; max-width: calc(100% - 28px);
+  padding: 12px 14px; border: 1px solid #ddd; border-radius: 8px;
+  background: rgba(255, 255, 255, .95); color: #39323f;
+  box-shadow: 0 2px 10px #00000016; font-size: 12px; line-height: 1.4;
+}
+.map-legend > strong { display: block; margin-bottom: 8px; color: #614392; font-size: 14px; }
+.legend-row { display: flex; gap: 8px; align-items: center; margin: 7px 0; }
+.legend-row > img { width: 19px; height: 19px; object-fit: contain; }
+.legend-patient-dot { width: 9px; height: 9px; margin: 0 5px; border-radius: 50%; background: #B04B90; box-shadow: 0 0 0 1px white, 0 0 0 2px #ddd; }
+.legend-boundary { width: 19px; border-top: 2px solid #6f6f6f; }
+.legend-subtitle { font-weight: bold; margin-top: 10px; }
+.legend-description { margin: 3px 0 7px; font-size: 11px; }
+.map-legend small { font-size: .85em; color: #6f6875; }
+.legend-gradient { height: 12px; border: 1px solid #d6d1d9; background: linear-gradient(to right, #FFC15C 0%, #FF8B68 10.714%, #E9617F 28.571%, #614392 100%); opacity: .25; }
+.legend-ticks { position: relative; height: 17px; margin-top: 3px; font-size: 10px; }
+.legend-ticks span { position: absolute; }
+.legend-ticks span:nth-child(1) { left: 0; }
+.legend-ticks span:nth-child(2) { left: 28.571%; transform: translateX(-50%); }
+.legend-ticks span:nth-child(3) { left: 64.286%; transform: translateX(-50%); }
+.legend-ticks span:nth-child(4) { right: 0; }
+.layer-hidden { opacity: .35; }
+.btn[aria-pressed="false"] { opacity: .55; }
+.btn[aria-pressed="true"] { box-shadow: inset 0 -2px 0 #0002; }
+@media (max-width: 1100px) { .map-legend { width: 200px; padding: 9px 10px; font-size: 11px; right: 10px; } }
+
+/* Unified surface buttons open consistent option menus. */
+.map-menu-control { position: relative; }
+.toolbar > .btn, .map-menu-control > .btn { height: 32px; white-space: nowrap; }
+#btn-patient { background: #614392; }
+#btn-medical { background: #B04B90; }
+#density-mode { background: #E9617F; }
+#heatmap-mode { background: #FF8B68; }
+#socioeconomic-mode { background: #FFC15C; }
+.toolbar .btn:hover { transform: none; }
+.toolbar .btn { font-size: clamp(10px, .9vw, 14px); gap: 5px; padding: 5px 8px; }
+.surface-gradient { height: 12px; border: 1px solid #d6d1d9; margin-top: 6px; }
+.surface-ticks { display: flex; justify-content: space-between; font-size: 10px; margin-top: 4px; }
+.map-layer-menu { min-width: 160px; }
+#socioeconomic-menu { min-width: 100%; }
+
+.heatmap-chevron { font-size: 10px !important; margin-left: 2px; }
+.map-layer-menu {
+  position: absolute; top: calc(100% + 7px); left: 0; min-width: 100%;
+  padding: 5px; border: 1px solid #e1dbe8; border-radius: 9px;
+  background: white; box-shadow: 0 5px 20px #0002; z-index: 1001;
+}
+.map-layer-menu[hidden] { display: none; }
+.map-layer-menu button {
+  display: block; width: 100%; border: 0; border-radius: 5px;
+  padding: 9px 30px 9px 12px; text-align: left; cursor: pointer;
+  color: #49306f; background: transparent; font: inherit; font-size: 13px;
+  position: relative;
+}
+.map-layer-menu button:hover, .map-layer-menu button:focus-visible { background: #f0eaf6; outline: none; }
+.map-layer-menu button[aria-checked="true"] { font-weight: bold; background: #f0eaf6; }
+.map-layer-menu button[aria-checked="true"]::after { content: '✓'; position: absolute; right: 10px; }
+.heatmap-gradient { height: 12px; margin-top: 8px; border-radius: 2px; background: linear-gradient(to right, #44206b, #9b367c 29.4%, #e96562 58.8%, #fca85d 82.4%, #fcfdbf); }
+.heatmap-scale { display: flex; justify-content: space-between; margin-top: 3px; font-size: 10px; }
+#legend-heatmap { margin-top: 9px; padding-top: 1px; border-top: 1px solid #e6e0e9; }
+
+/* Rebuilt score panel: a shared data series drives the latest score and chart. */
+.health-monitor { position: absolute; inset: 0; background: white; color: #614392; container-type: inline-size; }
+#health-chart { width: 100%; height: 100%; }
+.health-score { position: absolute; top: 1%; left: 13%; display: flex; align-items: center; gap: 3cqw; background: rgba(255, 255, 255, .94); pointer-events: none; }
+.health-score > strong { font-size: 12cqw; line-height: 1; }
+.health-score > div { display: flex; flex-direction: column; gap: 2px; text-align: center; }
+.health-score span { font-size: 3cqw; line-height: 1.15; }
+.health-score b { font-size: 3.5cqw; line-height: 1.2; background: #614392; color: white; border-radius: 5px; padding: 1px 14px; }

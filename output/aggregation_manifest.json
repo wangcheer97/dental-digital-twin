@@ -1,0 +1,11 @@
+{
+  "inputs": {
+    "raw/svi_texas.csv": "e6255bb896298afcbb4121eb1301be0c63df8de0efc0986189402db4d5bea22a",
+    "raw/acsdt5y2022-b19013.dat": "54dc9c5f15146d861080919372c1dde3f8b51c7bc3f8c175d97b60f2d1c6b85b",
+    "raw/blocks.zip": "3a496b2f926e3cfb63ae2fe7773853e91497d95728dee9cbc251f9188a039b6f",
+    "raw/blocks_population.zip": "d980a69f998c81fb8cd981c4d871a78baf5bd2a9decf14077cf99821524202b2"
+  },
+  "total_population": 120461,
+  "facilities_outside_regions": 0,
+  "method": "2020 block internal points in WGS84; POP20 weighted tract estimates; negative sentinels excluded per indicator; SVI rank reference follows input file."
+}

@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         series: [{
             type: 'bar',
-            data: [324, 200, 245, 80, 96, 132, 182],
+            data: window.COMMUNITY_STATS.communities.map(community => community.patientCount),
             // 柱状图填充颜色（白色渐变）
             itemStyle: {
                 color: {
@@ -142,15 +142,23 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// 容器尺寸变化（flex 布局）时自动重绘
+// Scale chart labels with panel dimensions as well as resizing the canvas.
 document.addEventListener('DOMContentLoaded', function () {
-    if (!window.ResizeObserver) return;
     ['chartContainer', 'lineChart'].forEach(id => {
         const el = document.getElementById(id);
-        if (!el) return;
-        new ResizeObserver(() => {
+        const update = () => {
             const inst = echarts.getInstanceByDom(el);
-            if (inst) inst.resize();
-        }).observe(el);
+            if (!inst || !el.clientWidth || !el.clientHeight) return;
+            const fontSize = Math.max(10, Math.min(18, el.clientWidth / 25.5, el.clientHeight / 12.5));
+            inst.resize();
+            inst.setOption({
+                xAxis: { axisLabel: { fontSize, margin: 8, interval: 0, hideOverlap: false } },
+                yAxis: { axisLabel: { fontSize } },
+                grid: { containLabel: true, top: '8%', bottom: '5%', left: '3%', right: '3%' }
+            });
+        };
+        if (window.ResizeObserver) new ResizeObserver(update).observe(el);
+        window.addEventListener('resize', update);
+        update();
     });
 });

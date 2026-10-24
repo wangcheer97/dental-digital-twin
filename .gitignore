@@ -28,3 +28,14 @@ demo copy.html
 1.html
 js/script.js
 claude_code_task_brief.md
+
+# Downloaded source data
+raw/
+
+# Local source model, task briefs and preview artifacts
+Model/*.blend
+Model/*.blend[0-9]
+TASK*.md
+output/*.png
+__pycache__/
+*.pyc

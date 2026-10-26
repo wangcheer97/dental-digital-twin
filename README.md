@@ -4,7 +4,7 @@ A prototype of the Community–Patient multi-scale oral health visualization sys
 
 Live demo: https://wangcheer97.github.io/dental-digital-twin/
 
-![Uploading Figure_2.png…]()
+<img width="4401" height="4964" alt="Figure_2" src="https://github.com/user-attachments/assets/f2796ab0-bc23-4fd3-a6ca-cb3cf6d6f188" />
 
 
 ## 3D model attribution
